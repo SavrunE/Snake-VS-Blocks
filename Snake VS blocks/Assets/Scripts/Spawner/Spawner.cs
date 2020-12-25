@@ -24,6 +24,7 @@ public class Spawner : MonoBehaviour
 
     private BlockSpawnPoint[] blocksSpawnPoints;
     private WallSpawnPoint[] wallSpawnPoints;
+    private float levelDistance;
 
     private void Start()
     {
@@ -42,6 +43,7 @@ public class Spawner : MonoBehaviour
             GenerateRandomLine(wallSpawnPoints, wallTemplate.gameObject, wallSpawnChance, distanceBetweenRandomLine * wallTemplate.transform.localScale.y, distanceBetweenRandomLine / 2f);
             GenerateCorrectCountLine(blocksSpawnPoints, bonusTemplate.gameObject, Random.Range(bonusCountSpawnRange.x, bonusCountSpawnRange.y));
         }
+        SpawnSideWall(levelDistance);
     }
 
     private void GenerateFullLine(SpawnPoint[] spawnPoints, GameObject generatedElement)
@@ -97,5 +99,18 @@ public class Spawner : MonoBehaviour
     private void MoveSpawner(float distanceY)
     {
         transform.position = new Vector3(transform.position.x, transform.position.y + distanceY, transform.position.z);
+        levelDistance += distanceY;
+    }
+    private void GenerateSideWalls(Vector3 spawnPoint, Wall walls, float SizeY)
+    {
+        GameObject wall = Instantiate(walls.gameObject, spawnPoint, Quaternion.identity, container);
+        wall.transform.localScale = new Vector3(wall.transform.localScale.x, SizeY, wall.transform.localScale.z);
+    }
+
+    public void SpawnSideWall(float levelDistance)
+    {
+        float defaultWidth = Camera.main.orthographicSize;
+        GenerateSideWalls(new Vector3(-defaultWidth / 2f, levelDistance / 2f + distanceBetweenFullLine, 0f), wallTemplate, levelDistance * wallTemplate.transform.localScale.y);
+        GenerateSideWalls(new Vector3(defaultWidth / 2f, levelDistance / 2f + distanceBetweenFullLine, 0f), wallTemplate, levelDistance * wallTemplate.transform.localScale.y);
     }
 }
