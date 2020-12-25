@@ -17,7 +17,7 @@ public class Spawner : MonoBehaviour
     [Header("Walls")]
     [SerializeField] private Wall wallTemplate;
     [SerializeField] private int wallSpawnChance;
-    
+
     [Header("Bonuses")]
     [SerializeField] private Bonus bonusTemplate;
     [SerializeField] private Vector2Int bonusCountSpawnRange;
@@ -57,13 +57,12 @@ public class Spawner : MonoBehaviour
         List<SpawnPoint> points = new List<SpawnPoint>();
         points.AddRange(spawnPoints);
 
+        SpawnPoint spawnedPoint;
         for (int i = 0; i < spawnCount; i++)
         {
-            for (int a = 0; a < points.Count; a++)
-            {
-                GenerateElement(points[a].transform.position, generatedElement);
-                points.Remove(points[a]);
-            }
+            spawnedPoint = points[Random.Range(0, points.Count)];
+            GenerateElement(spawnedPoint.transform.position, generatedElement);
+            points.Remove(spawnedPoint);
         }
     }
 
