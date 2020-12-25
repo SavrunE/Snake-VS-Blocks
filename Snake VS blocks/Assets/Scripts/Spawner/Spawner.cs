@@ -7,8 +7,8 @@ public class Spawner : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private Transform container;
     [SerializeField] private int repeatCount;
-    [SerializeField] private int distanceBetweenFullLine;
-    [SerializeField] private int distanceBetweenRandomLine;
+    [SerializeField] private float distanceBetweenFullLine;
+    [SerializeField] private float distanceBetweenRandomLine;
 
     [Header("Blocks")]
     [SerializeField] private Block blockTemplate;
@@ -17,9 +17,14 @@ public class Spawner : MonoBehaviour
     [Header("Walls")]
     [SerializeField] private Wall wallTemplate;
     [SerializeField] private int wallSpawnChance;
+    
+    [Header("Bonuses")]
+    [SerializeField] private Bonus bonusTemplate;
+    [SerializeField] private Vector2Int bonusCountSpawnRange;
 
     private BlockSpawnPoint[] blocksSpawnPoints;
     private WallSpawnPoint[] wallSpawnPoints;
+
     private void Start()
     {
         blocksSpawnPoints = GetComponentsInChildren<BlockSpawnPoint>();
@@ -28,11 +33,14 @@ public class Spawner : MonoBehaviour
         for (int i = 0; i < repeatCount; i++)
         {
             MoveSpawner(distanceBetweenFullLine);
-            GenerateRandomLine(wallSpawnPoints, wallTemplate.gameObject, wallSpawnChance, distanceBetweenFullLine, distanceBetweenFullLine / 2f);
+            GenerateRandomLine(wallSpawnPoints, wallTemplate.gameObject, wallSpawnChance, wallTemplate.transform.localScale.y * distanceBetweenFullLine, distanceBetweenFullLine / 2f);
             GenerateFullLine(blocksSpawnPoints, blockTemplate.gameObject);
-            MoveSpawner(distanceBetweenFullLine);
-            GenerateRandomLine(wallSpawnPoints, wallTemplate.gameObject, wallSpawnChance, distanceBetweenRandomLine, distanceBetweenRandomLine / 2f);
+            MoveSpawner(distanceBetweenRandomLine);
+            GenerateRandomLine(wallSpawnPoints, wallTemplate.gameObject, wallSpawnChance, distanceBetweenRandomLine * wallTemplate.transform.localScale.y, distanceBetweenRandomLine / 2f);
             GenerateRandomLine(blocksSpawnPoints, blockTemplate.gameObject, blockSpawnChance);
+            MoveSpawner(distanceBetweenRandomLine);
+            GenerateRandomLine(wallSpawnPoints, wallTemplate.gameObject, wallSpawnChance, distanceBetweenRandomLine * wallTemplate.transform.localScale.y, distanceBetweenRandomLine / 2f);
+            GenerateCorrectCountLine(blocksSpawnPoints, bonusTemplate.gameObject, Random.Range(bonusCountSpawnRange.x, bonusCountSpawnRange.y));
         }
     }
 
@@ -41,6 +49,21 @@ public class Spawner : MonoBehaviour
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             GenerateElement(spawnPoints[i].transform.position, generatedElement);
+        }
+    }
+
+    private void GenerateCorrectCountLine(SpawnPoint[] spawnPoints, GameObject generatedElement, int spawnCount)
+    {
+        List<SpawnPoint> points = new List<SpawnPoint>();
+        points.AddRange(spawnPoints);
+
+        for (int i = 0; i < spawnCount; i++)
+        {
+            for (int a = 0; a < points.Count; a++)
+            {
+                GenerateElement(points[a].transform.position, generatedElement);
+                points.Remove(points[a]);
+            }
         }
     }
 
@@ -54,7 +77,7 @@ public class Spawner : MonoBehaviour
             }
         }
     }
-    private void GenerateRandomLine(SpawnPoint[] spawnPoints, GameObject generatedElement, int spawnChance, int scaleY = 1, float offsetY = 0)
+    private void GenerateRandomLine(SpawnPoint[] spawnPoints, GameObject generatedElement, int spawnChance, float scaleY, float offsetY)
     {
         for (int i = 0; i < spawnPoints.Length; i++)
         {
@@ -72,7 +95,7 @@ public class Spawner : MonoBehaviour
         return Instantiate(generatedElement, spawnPoint, Quaternion.identity, container);
     }
 
-    private void MoveSpawner(int distanceY)
+    private void MoveSpawner(float distanceY)
     {
         transform.position = new Vector3(transform.position.x, transform.position.y + distanceY, transform.position.z);
     }

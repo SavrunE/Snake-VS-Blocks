@@ -248,7 +248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   view: {fileID: 717790935461770171}
-  bonusSizeRange: {x: 10, y: 50}
+  bonusSizeRange: {x: 30, y: 120}
 --- !u!1 &717790936811321440
 GameObject:
   m_ObjectHideFlags: 0

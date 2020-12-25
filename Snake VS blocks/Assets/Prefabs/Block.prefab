@@ -429,4 +429,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f06434559cc752d4f9f1bbe0f55b45f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destroyPriceRange: {x: 50, y: 100}
+  destroyPriceRange: {x: 10, y: 100}
+  colors:
+  - {r: 0.90588236, g: 0.40784314, b: 0.6784314, a: 1}
+  - {r: 0.90588236, g: 0.22745098, b: 0.59607846, a: 1}
+  - {r: 0.80784315, g: 0, b: 0.44313726, a: 1}
+  - {r: 0.60784316, g: 0.15294118, b: 0.4, a: 1}
+  - {r: 0.5254902, g: 0, b: 0.28627452, a: 1}

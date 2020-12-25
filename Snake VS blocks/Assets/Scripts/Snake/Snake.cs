@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(TailGenerator))]
 [RequireComponent(typeof(SnakeInput))]
@@ -25,6 +26,11 @@ public class Snake : MonoBehaviour
 
         tail = new List<Segment>();
         tailGenerator.Generate(ref tail, tailSize);
+        SizeUpdated?.Invoke(tail.Count);
+    }
+
+    private void Start()
+    {
         SizeUpdated?.Invoke(tail.Count);
     }
 
@@ -67,6 +73,10 @@ public class Snake : MonoBehaviour
         Destroy(deletedSegment.gameObject);
 
         SizeUpdated?.Invoke(tail.Count);
+        if (tail.Count == 0)
+        {
+            SceneManager.LoadScene(0);
+        }
     }
     private void OnBonusCollected(int bonusSize)
     {
