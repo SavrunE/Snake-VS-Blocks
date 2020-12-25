@@ -8,11 +8,12 @@ using UnityEngine.Events;
 public class Snake : MonoBehaviour
 {
     [SerializeField] private SnakeHead head;
+    [SerializeField] private int tailSize;
     [SerializeField] private float speed;
     [SerializeField] private float tailSpringiness;
 
     private SnakeInput snakeInput;
-    private Stack<Segment> tail;
+    private List<Segment> tail;
     private TailGenerator tailGenerator;
 
     public event UnityAction<int> SizeUpdated;
@@ -22,18 +23,21 @@ public class Snake : MonoBehaviour
         tailGenerator = GetComponent<TailGenerator>();
         snakeInput = GetComponent<SnakeInput>();
 
-        tailGenerator.Generate(ref tail);
+        tail = new List<Segment>();
+        tailGenerator.Generate(ref tail, tailSize);
         SizeUpdated?.Invoke(tail.Count);
     }
 
     private void OnEnable()
     {
         head.BlockCollision += OnBlockCollided;
+        head.BonusCollected += OnBonusCollected;
     }
 
     private void OnDisable()
     {
         head.BlockCollision -= OnBlockCollided;
+        head.BonusCollected -= OnBonusCollected;
     }
 
     private void FixedUpdate()
@@ -58,8 +62,15 @@ public class Snake : MonoBehaviour
 
     private void OnBlockCollided()
     {
-        Destroy(tail.Pop().gameObject);
+        Segment deletedSegment = tail[tail.Count - 1];
+        tail.Remove(deletedSegment);
+        Destroy(deletedSegment.gameObject);
 
+        SizeUpdated?.Invoke(tail.Count);
+    }
+    private void OnBonusCollected(int bonusSize)
+    {
+        tailGenerator.Generate(ref tail, bonusSize);
         SizeUpdated?.Invoke(tail.Count);
     }
 }

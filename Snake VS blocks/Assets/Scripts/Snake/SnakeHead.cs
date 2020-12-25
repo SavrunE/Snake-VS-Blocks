@@ -9,6 +9,7 @@ public class SnakeHead : MonoBehaviour
     private Rigidbody2D body;
 
     public event UnityAction BlockCollision;
+    public event UnityAction<int> BonusCollected;
 
     private void Start()
     {
@@ -25,6 +26,13 @@ public class SnakeHead : MonoBehaviour
         {
             block.Fill();
             BlockCollision?.Invoke();
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent(out Bonus bonus))
+        {
+            BonusCollected?.Invoke(bonus.Collect());
         }
     }
 }
